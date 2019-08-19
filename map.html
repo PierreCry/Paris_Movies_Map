@@ -1,0 +1,1041 @@
+<!-- 
+TODO :
+
+- zoom in / out il se réaffiche
+- Pop up (pierre)
+
+- il faut ferme le panneau de droite après avoir cliqué sur modifier ou supprimer ($(#id_du_formulaire).hide()) et donc louvrir au clic sur la carte ($(#id_du_formulaire).show())
+
+-->
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+	<title>Carte</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<!-- carte background -->
+	<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+		integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+		crossorigin=""></script>
+
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+		integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+
+	<!-- leaflet main -->
+	<link rel="stylesheet" href="screen.css" />
+	<link rel="stylesheet" href="node_modules/leaflet.markercluster/dist/MarkerCluster.css" />
+	<link rel="stylesheet" href="node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+
+	<!-- leaflet extension cluster -->
+	<script src="node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+
+
+	<!-- Boostrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="leaflet-sidebar.css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Jquery UI -->
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+	<style>
+	
+		body {
+			padding: 0;
+			margin: 0;
+		}
+
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+		}
+
+		html,
+		body,
+		#map {
+			height: 100%;
+			font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif;
+		}
+
+		.lorem {
+			font-style: italic;
+			color: #AAA;
+		}
+
+		.sidenav {
+			height: 100%;
+			width: 0;
+			position: fixed;
+			z-index: 1;
+			top: 0;
+			left: 0;
+			background-color: #111;
+			overflow-x: hidden;
+			transition: 0.5s;
+			padding-top: 60px;
+		}
+
+		.sidenav a {
+			padding: 8px 8px 8px 32px;
+			text-decoration: none;
+			font-size: 25px;
+			color: #818181;
+			display: block;
+			transition: 0.3s;
+		}
+
+		.sidenav a:hover {
+			color: #f1f1f1;
+		}
+
+		.sidenav .closebtn {
+			position: absolute;
+			top: 0;
+			right: 25px;
+			font-size: 36px;
+			margin-left: 50px;
+		}
+
+		@media screen and (max-height: 450px) {
+			.sidenav {
+				padding-top: 15px;
+			}
+
+			.sidenav a {
+				font-size: 18px;
+			}
+		}
+
+		#map {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
+
+		.ui-autocomplete {
+			position: relative;
+		}
+		
+		@-webkit-keyframes mleft {
+			0% { left: 400px; }
+			100% { left: 0px; }
+		}
+
+		#divFloat {
+			display: none;
+			position: absolute;
+			background: #2c3e50;
+			color: #fff;
+			margin-left: 80%;
+			margin-top: 2%;
+			padding: 10px;
+			width: 15%;
+			z-index: 2;
+			border-radius: 15px;
+			-webkit-animation: mleft 2s 1;
+			-moz-animation: mleft 2s 1;
+			animation: mleft 2s 1;
+		}
+		
+		.bd-placeholder-img {
+			font-size: 1.125rem;
+			text-anchor: middle;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+
+		@media (min-width: 768px) {
+			.bd-placeholder-img-lg {
+				font-size: 3.5rem;
+			}
+		}
+
+		button #backButton {
+			border-radius: 4px;
+			padding: 8px;
+			border: none;
+			font-size: 16px;
+			background-color: #2eacd1;
+			color: black;
+			position: relative;
+			cursor: pointer;
+		}
+		
+		button #backButton2 {
+			border-radius: 4px;
+			padding: 8px;
+			border: none;
+			font-size: 16px;
+			background-color: #2eacd1;
+			color: black;
+			position: relative;
+			cursor: pointer;
+		}
+		
+		.invisible {
+			display: none;
+		}
+		
+		.custom-popup .leaflet-popup-content-wrapper {
+			background:#2c3e50;
+			color:#fff;
+			font-size:16px;
+			line-height:24px;
+			border-radius: 0px;
+		}
+		.custom-popup .leaflet-popup-content-wrapper a {
+			color:rgba(255,255,255,0.1);
+		}
+		.custom-popup .leaflet-popup-tip-container {
+			width:30px;
+			height:15px;
+		}
+		.custom-popup .leaflet-popup-tip {
+			background: transparent;
+			border: none;
+			box-shadow: none;
+		}
+		
+		.labelClass {
+			white-space: nowrap;
+			text-shadow: 0 0 0.1em white, 0 0 0.1em white,0 0 0.1em white,0 0 0.1em white,0 0 0.1em;
+			color: #2c3e50;
+			font-size: 25px;
+			font-family: bold;
+		}
+		
+		.labelClass button {
+			margin: 5px;
+		}
+		
+	</style>
+	
+	<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	
+	<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+	<script src="leaflet-sidebar.js"></script>
+	<div id="sidebar" class="sidebar collapsed">
+		<div class="sidebar-tabs">
+			<ul role="tablist">
+				<li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+				<li><a href="#formSelect" role="tab"><i class="fab fa-wpforms"></i></a></li>
+				<li><a href="#stats" role="tab"><i class="fas fa-chart-pie"></i></a></li>
+				<li class="disabled" id="statstemp_li"><a href="#statstemp" role="tab"><i class="fas fa-chart-line"></i></a></li>
+			</ul>
+
+			<ul role="tablist">
+				<li><a href="#help" role="tab"><i class="fas fa-question"></i></a></li>
+				<li><a href="#aboutus" role="tab"><i class="fas fa-users"></i></a></li>
+			</ul>
+		</div>
+
+		<div class="sidebar-content">
+			<div class="sidebar-pane" id="home">
+				<h1 class="sidebar-header">
+					Menu Site Web
+					<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+				</h1>
+				<h2><a href="home_page" role="button"><i class="fas fa-home"></i></i> Page d'accueil</a></h2>
+				<h2><a href="" role="button"><i class="fas fa-globe-europe"></i> La carte</a></h2>
+				<h2><a href="stats" role="button"><i class="far fa-chart-bar"></i> Les stats</a></h2>
+
+			</div>
+
+			<div class="sidebar-pane " id="formSelect">
+				<h1 class="sidebar-header">Formulaire de selection<span class="sidebar-close"><i
+							class="fa fa-caret-left"></i></span></h1>
+				<div class="container ui-front" style="width:100%;">
+					<h3>Sélectionner les attributs du ou des tournages souhaités</h3>
+					<form id="formLoaderFilter" autocomplete="off">
+						<div class="form-group">
+							<label for="formLoaderFilter__type_de_tournage">Type de tournage</label>
+							<select class="form-control" name="type_de_tournage"
+								id="formLoaderFilter__type_de_tournage">
+								<option>NON RENSEIGNE</option>
+								<option>TELEFILM</option>
+								<option>LONG METRAGE</option>
+								<option>SERIE TELEVISEE</option>
+							</select>
+						</div>
+						<div class="form-group" id="titre">
+							<label for="formLoaderFilter__titre">Titre</label>
+							<input class="form-control" type="search" name="titre"
+								onkeyup='this.value=this.value.toUpperCase()' id="formLoaderFilter__titre">
+
+						</div>
+						<div class="form-group" id="real">
+							<label for="formLoaderFilter__realisateur">Realisateur</label>
+							<input class="form-control" type="search" name="realisateur"
+								onkeyup='this.value=this.value.toUpperCase()' id="formLoaderFilter__realisateur">
+						</div>
+						<div class="form-group " id="orga">
+							<label for="formLoaderFilter__organisme_demandeur">Organisme demandeur</label>
+							<input class="form-control" type="search" name="organisme_demandeur"
+								onkeyup='this.value=this.value.toUpperCase()'
+								id="formLoaderFilter__organisme_demandeur">
+
+						</div>
+						<div class="form-group">
+							<label for="formLoaderFilter__adresse">Adresse</label>
+							<input class="form-control" type="search" name="adresse"
+								onkeyup='this.value=this.value.toUpperCase()' id="formLoaderFilter__adresse">
+						</div>
+						<div class="form-group">
+							<label for="formLoaderFilter__ardt">Arrondissement</label>
+							<input class="form-control" type="search" name="ardt" id="formLoaderFilter__ardt">
+						</div>
+						<div class="form-group">
+							<label for="formLoaderFilter__date_debut">Date de debut de tournage</label>
+							<input class="form-control" type="date" name="date_debut" min="2016-01-01" max="2016-12-31"
+								id="formLoaderFilter__date_debut">
+						</div>
+						<div class="form-group">
+							<label for="formLoaderFilter__date_fin">Date de fin de tournage</label>
+							<input class="form-control" type="date" name="date_fin" min="2016-01-01" max="2016-12-31"
+								id="formLoaderFilter__date_fin">
+						</div>
+						<button class="btn btn-primary" type="submit" id="sub">Valider</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="sidebar-pane" id="stats">
+				<h1 class="sidebar-header">Statistiques générale<span class="sidebar-close"><i
+							class="fa fa-caret-left"></i></span></h1>
+				<div class="container ui-front" style="width:100%;">
+
+
+					<ul class="list-group">
+						<li class="list-group-item">Nombre de tournage <span class="badge badge-info"
+								id="NombreTournage"></span></li>
+						<li class="list-group-item">Nombre de réalisateur<span class="badge badge-info"
+								id="NombreReal"></span></li>
+						<li class="list-group-item">Nombre d'organisme demandeur <span class="badge badge-info"
+								id="NombreOrganisme"></span></li>
+						<li class="list-group-item">Nombre de films <span class="badge badge-info"
+								id="NombreDeFilm"></span></li>
+
+						
+						
+						<button type="button" style="width:100%;" id="ardt2" class="btn btn-primary" data-toggle="modal"
+							data-whatever="Charts nombre de tournage par arrondissement" data-target="#exampleModal">
+							Le nombre de tournage par arrondissement par type
+						</button>
+
+						<button type="button" style="width:100%;" id="type" class="btn btn-primary" data-toggle="modal"
+							data-whatever="Charts nombre de tournage par type" data-target="#exampleModal">
+							Le nombre de tournage par type
+						</button>
+
+						<button type="button" style="width:100%;" id="drill" class="btn btn-primary" data-toggle="modal"
+							data-whatever="Charts nombre de tournage par efzfsqd" data-target="#exampleModal">
+							Le nombre de tournage par ...
+						</button>
+
+						<button type="button" style="width:100%;" id="mois" class="btn btn-primary" data-toggle="modal"
+							data-whatever="Charts nombre de tournage par mois" data-target="#exampleModal">
+							Nombre de tournage par mois par type
+						</button>
+
+						<button type="button" style="width:100%;" id="durée" class="btn btn-primary" data-toggle="modal"
+							data-whatever="Charts nombre de tournage par durée" data-target="#exampleModal">
+							Nombre de tournage par durée
+						</button>
+					</ul>
+
+				</div>
+			</div>
+			<div class="sidebar-pane" id="statstemp">
+				<h1 class="sidebar-header">Statistiques Temporaire<span class="sidebar-close"><i
+							class="fa fa-caret-left"></i></span></h1>
+				<div class="container ui-front" style="width:100%;">
+					<ul class="list-group">
+						<li class="list-group-item">Nombre de tournage <span class="badge badge-info"
+								id="NombreTournageTemp">0</span></li>
+						<li class="list-group-item">Nombre de réalisateurs <span class="badge badge-info"
+								id="NombreRealTemp">0</span></li>
+						<li class="list-group-item">Nombre d'organisme demandeur <span class="badge badge-info"
+								id="NombreOrgTemp">0</span></li>
+						<li class="list-group-item">Nombre de films <span class="badge badge-info"
+								id="NombreFilmTemp">0</span></li>
+
+						<button type="button" style="width:100%;" id="multiTemp" class="btn btn-primary"
+							data-toggle="modal" data-whatever="Charts nombre de tournage par réalisateur"
+							data-target="#exampleModalTemp">
+							Le nombre de tournage par ...
+						</button>
+
+						<button type="button" style="width:100%;" id="typeTemp" class="btn btn-primary"
+							data-toggle="modal" data-whatever="Charts nombre de tournage par type"
+							data-target="#exampleModalTemp">
+							Le nombre de tournage par type
+						</button>
+						
+						<button type="button" style="width:100%;" id="moisTemp" class="btn btn-primary"
+							data-toggle="modal" data-whatever="Charts nombre de tournage par type"
+							data-target="#exampleModalTemp">
+							Le nombre de tournage par mois par type
+						</button>
+
+						<button type="button" style="width:100%;" id="duréeTemp" class="btn btn-primary"
+							data-toggle="modal" data-whatever="Charts nombre de tournage par durée"
+							data-target="#exampleModalTemp">
+							Le nombre de tournage par durée
+						</button>
+						
+						<button type="button" style="width:100%;" id="ardtTemp" class="btn btn-primary"
+							data-toggle="modal" data-whatever="Charts nombre de tournage par durée"
+							data-target="#exampleModalTemp">
+							Le nombre de tournage par arrondissement par type
+						</button>
+					</ul>
+
+
+
+
+				</div>
+			</div>
+
+	
+		
+		<div class="sidebar-pane" id="help">
+			<h1 class="sidebar-header">Aide<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+			</h1>
+			<div class="container" style="width:100%;">
+			<div>
+			<h3><i class="fa fa-bars"></i> Onglet Navigation</h3> 
+				<p class="font-weight-normal"> Cet onglet vous ramène à la liste des différentes pages du site</p>
+			</div>
+			
+			<div>
+			<h3><i class="fab fa-wpforms"></i> </i> Onglet Recherche</h3> 
+				<p class="font-weight-normal"> Cet onglet vous permettra de faire votre propre recherche sur les tournages dans la ville de Paris en 2016.</p>
+			</div>
+			<div>
+			<h3><i class="fas fa-chart-pie"></i> Onglet Stats générale</h3> 
+			  <p class="font-weight-normal"> Cet onglet vous montrera des statistiques par rapport à la totalité des tournages dans la ville de Paris. </p>
+			</div>
+			
+			<div>
+			<h3><i class="fas fa-chart-line"></i> Onglet Stats Temporaire</h3> 
+				<div class="alert alert-danger" role="alert"> Cet onglet ne s'activera qu'après avoir fait une recherche.</div>  
+					<p class="font-weight-normal"> Il vous permettra de montrer des statistiques identique que l'onglet précédent mais sur la
+							totalité des tournages affichés après votre recherche. </p>
+			</div>
+			</div>
+		</div>
+		
+			
+
+		
+		
+		</div>
+
+		<div class="sidebar-pane" id="aboutus">
+			<h1 class="sidebar-header">Notre groupe<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+			</h1>
+			<h2> <i class="fas fa-user-astronaut"></i> Pierre CRY </h2>
+			<h2> <i class="fas fa-user-secret"></i> Diego ORTIZ </h2>
+			<h2> <i class="fas fa-user-ninja"></i> Matthias AMBROISE </h2>
+		</div>
+	</div>
+	</div>
+
+
+	<div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				
+				<div class="modal-body" style="height: 500px; width:868.01">
+
+					<div id="TypeTournage" style="display:none;"></div>
+
+					<div id="TournageArdtParType" style="display:none;"></div>
+
+
+					<div id="test" style="display:none;">
+						<button class="btn invisible" id="backButton">
+							Back</button>
+						<div id="chartContainer"> </div>
+						
+					</div>
+					
+					<div id="TournageMois" style="display:none;">
+					</div>
+					<div id="TournageDuree" style="display:none;"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="close" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		function allHide(classname, id) {
+			classobj = document.getElementsByClassName(classname);
+			for (var i = 0; i < classobj["0"].children.length; i++) {
+				if (id != classobj["0"].children[i].id) {
+					classobj["0"].children[i].style.display = "none";
+				}
+			}
+		}
+		$('#exampleModal').on('show.bs.modal', function (event) {
+			var button = $(event.relatedTarget) // Button that triggered the modal
+			//   console.log(button);
+			var recipient = button.data('whatever'); // Extract info from data-* attributes
+			// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+			// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+			var b_id = button.context.id;
+			//   <!-- console.log(b_id); -->
+			var modal = $(this);
+
+			classobj = document.getElementsByClassName("modal-body");
+			// <!-- console.log(classobj); -->
+			// <!-- console.log(classobj["0"].children); -->
+			// <!-- console.log(classobj["0"].children[0].id); -->
+			// <!-- console.log(classobj["0"].children[0].style.display); -->
+			modal.find('.modal-title').text(recipient);
+			if (b_id == "ardt2") {
+				var id = "TournageArdtParType";
+				allHide("modal-body", id);
+			}
+			else if (b_id == "type") {
+				var id = "TypeTournage";
+				allHide("modal-body", id);
+			}
+			else if (b_id == "drill") {
+				var id = "test";
+				allHide("modal-body", id);
+			}
+			else if (b_id == "mois") {
+				var id = "TournageMois";
+				allHide("modal-body", id);
+			}
+			else if (b_id == "durée") {
+				var id = "TournageDuree";
+				allHide("modal-body", id);
+			}
+			var obj = document.getElementById(id);
+			<!-- console.log(obj); -->
+			obj.style.display = "block";
+		})
+	</script>
+
+	<div class="modal fade bd-example-modal-lg" id="exampleModalTemp" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelTemp"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" >
+				<div class="modal-body" style="height: 550px; width:868.01">
+					<div id="test2" >
+						<button class="btn invisible" id="backButton2">
+							Back</button>
+						<div id="chartTemp"> </div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="closeTemp" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+	
+
+	<div id="map" class="sidebar-map"></div>
+
+	<div id="divFloat" class="sidebar-form">
+		<form id="formAff">
+			<div class="form-group">
+				<label for="formAff__id">ID</label>
+				<input class="form-control" type="text" id="formAff__id" name="id" readonly="readonly">
+			</div>
+			<div class=" form-group">
+				<label for="formAff__type_de_tournage">Type de tournage</label>
+				<select class="form-control" onchange="VerifForm()" id="formAff__type_de_tournage" name="type_de_tournage">
+					<option>NON RENSEIGNE</option>
+					<option>TELEFILM</option>
+					<option>LONG METRAGE</option>
+					<option>SERIE TELEVISEE</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="formAff__titre">Titre</label>
+				<input class="form-control" type="text" onkeyup='this.value=this.value.toUpperCase()'
+					onchange="VerifForm()" id="formAff__titre" name="titre">
+			</div>
+			<div class="form-group">
+				<label for="formAff__realisateur">Realisateur</label>
+				<input class="form-control" type="text" onkeyup='this.value=this.value.toUpperCase()'
+					onchange="VerifForm()" id="formAff__realisateur" name="realisateur">
+			</div>
+			<div class="form-group">
+				<label for="formAff__organisme_demandeur">Organisme demandeur</label>
+				<input class="form-control" type="text" onkeyup='this.value=this.value.toUpperCase()'
+					onchange="VerifForm()" id="formAff__organisme_demandeur" name="organisme_demandeur">
+			</div>
+			<div class="form-group">
+				<label for="formAff__adresse">Adresse</label>
+				<input class="form-control" type="text" onkeyup='this.value=this.value.toUpperCase()'
+					onchange="VerifForm()" id="formAff__adresse" name="adresse">
+			</div>
+			<div class="form-group">
+				<label for="formAff__ardt">Arrondissement</label>
+				<input class="form-control" type="text" onchange="VerifForm()" id="formAff__ardt" name="ardt">
+			</div>
+			<div class="form-group">
+				<label for="formAff__date_debut">Date de debut de tournage</label>
+				<input class="form-control" type="date" min="2016-01-01" max="2016-12-31" onchange="VerifForm()" id="formAff__date_debut"
+					name="date_debut">
+			</div>
+			<div class="form-group">
+				<label for="formAff__date_fin">Date de fin de tournage</label>
+				<input class="form-control" type="date" min="2016-01-01" max="2016-12-31" onchange="VerifForm()" id="formAff__date_fin"
+					name="date_fin">
+			</div>
+			<button class="btn btn-primary" id="mod" type="submit"
+				onclick="modifMarker(document.getElementById('formAff__id').value)">Modifier</button>
+
+			<button class="btn btn-primary" name="Supprimer" id="suppr">Supprimer</button>
+			<button class="btn btn-primary"
+				onclick="document.getElementById('divFloat').style.display = 'none'">Fermer</button>
+		</form>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script type="text/javascript" src="stats.js"></script>
+	
+	<script>
+	
+		/////////////////////////////////////////////////////////////////////////////
+		//Variables usuelles//
+		
+		var map;
+		var flag = true;
+		var confirm = true;
+		var newMarker;
+		var newMarkerId;
+		var clickedMarker;
+
+		/////////////////////////////////////////////////////////////////////////////
+		//Création de la map et ajout de la sidebar//
+
+		var sidebar = L.control.sidebar('sidebar').addTo(map);
+		map = L.map('map').setView([48.866667, 2.333333], 12);
+
+		L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+			maxZoom: 18,
+			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+				'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+				'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+			id: 'mapbox.streets'
+		}).addTo(map);
+
+		/////////////////////////////////////////////////////////////////////////////
+		//Chargements des points sur la map//
+		
+		var points;
+		var mapMarkers = [];
+		
+		var Icon_red = L.icon({iconUrl:'video_red.png',iconSize:[26,26],iconAnchor:[15,0],popupAnchor:[0,0]});
+		var Icon_green = L.icon({iconUrl:'video_green.png',iconSize:[26,26],iconAnchor:[15,0],popupAnchor:[0,0]});
+		var Icon_blue = L.icon({iconUrl:'video_blue.png',iconSize:[26,26],iconAnchor:[15,0],popupAnchor:[0,0]});
+		
+		function onPopupOpen() {
+			clickedMarker = this;
+			VerifForm();
+		}
+		
+		function loadMap() {
+			$.ajax({
+				method: 'GET',
+				url: 'http://localhost:444/geojson',
+				dataType: 'json',
+				success: function (response) {
+					loadPoint(response);
+				},
+				error: function (jqXHR, text, error) {
+					console.log(jqXHR, text, error);
+				}
+			});
+		}
+		
+		function loadPoint(response){	
+			var markers = L.markerClusterGroup();
+			points = L.geoJSON(response, {
+				pointToLayer: function (feature, latlng) {
+					if (feature.properties.type_de_tournage == 'TELEFILM') {
+						return L.marker(latlng, { icon: Icon_red, draggable: true });
+					} if (feature.properties.type_de_tournage == 'LONG METRAGE') {
+						return L.marker(latlng, { icon: Icon_green, draggable: true });
+					} if (feature.properties.type_de_tournage == 'SERIE TELEVISEE') {
+						return L.marker(latlng, { icon: Icon_blue, draggable: true });
+					}
+				},
+				onEachFeature: function (feature, layer) {
+					layer.bindPopup(
+						'<div>'
+						+ '<label>Longitude: ' + feature.properties.xy[0] + '</label>'
+						+ '</br>'
+						+ '<label>Latitude: ' + feature.properties.xy[1] + '</label>'
+						+ '</div>',
+						{'className': 'custom-popup'}
+					);
+					layer.on("popupopen", onPopupOpen);
+					layer.on('click', function (evt) {
+						document.getElementById('divFloat').style.display = 'block';
+						document.getElementById('formAff__id').value = feature.properties.id;
+						document.getElementById('formAff__type_de_tournage').value = feature.properties.type_de_tournage;
+						document.getElementById('formAff__titre').value = feature.properties.titre;
+						document.getElementById('formAff__realisateur').value = feature.properties.realisateur;
+						document.getElementById('formAff__organisme_demandeur').value = feature.properties.organisme_demandeur;
+						document.getElementById('formAff__adresse').value = feature.properties.adresse;
+						document.getElementById('formAff__ardt').value = feature.properties.ardt;
+						document.getElementById('formAff__date_debut').value = feature.properties.date_debut;
+						document.getElementById('formAff__date_fin').value = feature.properties.date_fin;
+					});
+					layer.on('dragend', function (e) {
+						console.log("ok");
+						lat = layer.getLatLng().lat;
+						lng = layer.getLatLng().lng;
+						$.ajax({
+							type: 'POST',
+							url: 'http://localhost:444/modiflatlng',
+							data: { id: feature.properties.id, x: lat, y: lng },
+							success: function (response) {
+								if (response.status == 0) {
+									loadMap();
+								}
+							},
+							error: function (jqXHR, text, error) {
+								console.log(jqXHR, text, error);
+							}
+						});
+					});
+				}, filter: function (feature, layer) {
+					var val_tdt = document.getElementById('formLoaderFilter__type_de_tournage').value;
+					if (val_tdt == 'NON RENSEIGNE') { var bool_tdp = true; } else { bool_tdp = (feature.properties.type_de_tournage == val_tdt); }
+					var val_t = document.getElementById('formLoaderFilter__titre').value;
+					if (val_t == '') { var bool_t = true; } else { bool_t = (feature.properties.titre == val_t); }
+					var val_r = document.getElementById('formLoaderFilter__realisateur').value;
+					if (val_r == '') { var bool_r = true; } else { bool_r = (feature.properties.realisateur == val_r); }
+					var val_od = document.getElementById('formLoaderFilter__organisme_demandeur').value;
+					if (val_od == '') { var bool_od = true; } else { bool_od = (feature.properties.organisme_demandeur == val_od); }
+					var val_ad = document.getElementById('formLoaderFilter__adresse').value;
+					if (val_ad == '') { var bool_ad = true; } else { bool_ad = (feature.properties.adresse == val_ad); }
+					var val_ar = document.getElementById('formLoaderFilter__ardt').value;
+					if (val_ar == '') { var bool_ar = true; } else { bool_ar = (feature.properties.ardt == val_ar); }
+					var val_dd = document.getElementById('formLoaderFilter__date_debut').value;
+					if (val_dd == '') { var bool_dd = true; } else { bool_dd = (feature.properties.date_debut >= val_dd); }
+					var val_df = document.getElementById('formLoaderFilter__date_fin').value;
+					if (val_df == '') { var bool_df = true; } else { bool_df = (feature.properties.date_fin <= val_df); }
+					return (bool_tdp && bool_t && bool_r && bool_od && bool_ad && bool_ar && bool_dd && bool_df);
+				}
+			});
+			mapMarkers.push(markers);
+			for (var i = 0; i < mapMarkers.length; i++) {
+				map.removeLayer(mapMarkers[i]);
+			}
+			markers.addLayer(points);
+			map.addLayer(markers);
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////
+		//Statistiques//
+		
+		var mapMarkersTemp = [];
+		
+		function compareNombres(a, b) {
+			return a[0] - b[0];
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////
+		//Modification et suppression des points//
+		
+		function VerifForm() {
+			console.log('iniii');
+			var AllIsOk=0;
+			if (document.getElementById('formAff__id').value == ''){AllIsOk++;}
+			if (document.getElementById('formAff__type_de_tournage').value == ''){AllIsOk++;}
+			if (document.getElementById('formAff__titre').value == ''){AllIsOk++;}
+			if (document.getElementById('formAff__realisateur').value == ''){AllIsOk++;}
+			if (document.getElementById('formAff__organisme_demandeur').value == ''){AllIsOk++;}
+			if (document.getElementById('formAff__adresse').value == ''){AllIsOk++;}
+			if (document.getElementById('formAff__ardt').value == ''){AllIsOk++;}
+			if (document.getElementById('formAff__date_debut').value == ''){AllIsOk++;}
+			if (document.getElementById('formAff__date_fin').value == ''){AllIsOk++;}
+            document.getElementById("mod").disabled = (AllIsOk != 0);
+		}
+		
+		function modifMarker(id) {
+			if (id == newMarkerId){
+				flag = true;
+				map.removeLayer(newMarker)
+				document.getElementById('sub').click();
+			}
+		}
+
+		$("#formAff").submit(function (event) {
+			var btn_id = $(document.activeElement).attr('id');
+			var marqueur_id = $("#formAff").find('input[name="id"]').val();
+			event.preventDefault();
+			if (btn_id == "mod") {
+					console.log('accept');
+					$.ajax({
+						type: 'POST',
+						url: 'http://localhost:444/modifmarqueur',
+						data: $(this).serialize(),
+						success: function (response) {
+							if (response.status == 0) {
+								loadMap();
+							}
+						},
+						error: function (jqXHR, text, error) {
+							console.log(jqXHR, text, error);
+						}
+					});
+					document.getElementById('divFloat').style.display = 'none';
+			} else if (btn_id == "suppr") {
+				console.log("in");
+				map.removeLayer(clickedMarker);
+				$.ajax({
+					type: 'POST',
+					url: 'http://localhost:444/removemarqueur',
+					data: { id: marqueur_id },
+					success: function (response) {
+						loadMap();
+					},
+					error: function (jqXHR, text, error) {
+						console.log(jqXHR, text, error);
+					}
+				});
+				flag = true;
+				document.getElementById('divFloat').style.display = 'none';
+			}
+		});
+
+		/////////////////////////////////////////////////////////////////////////////
+		//Creation d'un point dans la map et dans la db//
+
+		var confirmIcon;
+		
+		map.on('click', function (e) {
+			if (!flag) { return; }
+			if (!confirm) { return; }
+			confirm = false;
+			lat = e.latlng.lat;
+			lng = e.latlng.lng;
+			confirmIcon = L.marker(new L.LatLng(e.latlng.lat,e.latlng.lng), {icon: 
+				L.divIcon({
+					className: "labelClass",
+					html: "<div>"
+							+ "<p>Voulez-vous vraiment créer un point içi ?</p>"
+							+ "<button onclick='YesAddMarkerMAP(lat,lng); confirmIconRemove();'>OUI</button>"
+							+ "<button onclick='NoAddMarkerMAP(lat,lng); confirmIconRemove();'>NON</button>"
+						  + "</div>"
+				})
+			}).addTo(map);
+		});
+		
+		function YesAddMarkerMAP (lat,lng) {
+			$.ajax({
+				method: 'GET',
+				url: 'http://localhost:444/nombredeligne',
+				dataType: 'json',
+				success: function (response) {
+					var newid = response.nb;
+					newMarkerId = newid;
+					newMarker = L.marker([lat,lng]);
+					newMarker.bindPopup(
+						'<div>'
+						+ '<label>Longitude: ' + lng + '</label>'
+						+ '</br>'
+						+ '<label>Latitude: ' + lat + '</label>'
+						+ '</div>',
+						{'className': 'custom-popup'}
+					);
+					newMarker.on("popupopen", onPopupOpen);
+					newMarker.on('click', function (evt) {
+						document.getElementById('divFloat').style.display = 'block';
+						document.getElementById('formAff__id').value = response.nb;
+						document.getElementById('formAff__type_de_tournage').value = "";
+						document.getElementById('formAff__titre').value = "";
+						document.getElementById('formAff__realisateur').value = "";
+						document.getElementById('formAff__organisme_demandeur').value = "";
+						document.getElementById('formAff__adresse').value = "";
+						document.getElementById('formAff__ardt').value = "";
+						document.getElementById('formAff__date_debut').value = "";
+						document.getElementById('formAff__date_fin').value = "";
+					});
+					map.addLayer(newMarker);
+					addMarkerDB(lat, lng, newid);
+					flag = false;
+					confirm = true;
+					newMarkerId = newid;
+				},
+				error: function (jqXHR, text, error) {
+					console.log(jqXHR, text, error);
+				}
+			});
+		}
+	
+		function NoAddMarkerMAP (lat,lng) {
+			$.ajax({
+				method: 'GET',
+				url: 'http://localhost:444/nombredeligne',
+				dataType: 'json',
+				success: function (response) {
+					var newid = response.nb;
+					newMarkerId = newid;
+					newMarker = L.marker([lat,lng]);
+					newMarker.bindPopup(
+						'<div>'
+						+ '<label>Longitude: ' + lng + '</label>'
+						+ '</br>'
+						+ '<label>Latitude: ' + lat + '</label>'
+						+ '</div>'
+					);
+					newMarker.on("popupopen", onPopupOpen);
+					newMarker.on('click', function (evt) {
+						document.getElementById('divFloat').style.display = 'block';
+						document.getElementById('formAff__id').value = response.nb;
+						document.getElementById('formAff__type_de_tournage').value = "";
+						document.getElementById('formAff__titre').value = "";
+						document.getElementById('formAff__realisateur').value = "";
+						document.getElementById('formAff__organisme_demandeur').value = "";
+						document.getElementById('formAff__adresse').value = "";
+						document.getElementById('formAff__ardt').value = "";
+						document.getElementById('formAff__date_debut').value = "";
+						document.getElementById('formAff__date_fin').value = "";
+					});
+					map.addLayer(newMarker);
+					map.removeLayer(newMarker);
+					confirm = true;
+					newMarkerId = newid;
+				},
+				error: function (jqXHR, text, error) {
+					console.log(jqXHR, text, error);
+				}
+			});
+		}
+		
+		function addMarkerDB(lat, lng, newid) {
+			$.ajax({
+				method: 'POST',
+				url: 'http://localhost:444/userInput',
+				data: { id: newid, x: lat, y: lng },
+				success: function (response) {
+					console.log(response.status);
+				},
+				error: function (jqXHR, text, error) {
+					console.log(jqXHR, text, error);
+				}
+			});
+		}
+		
+		function confirmIconRemove () {
+			map.removeLayer(confirmIcon);
+		}
+			
+		/////////////////////////////////////////////////////////////////////////////
+		//Récupération des infos pour l'autocomplete//
+		
+		$(document).ready(
+			function () {
+				alltitreRecup();
+				allrealRecup();
+				allorgaRecup();
+			}
+		);
+		
+		function alltitreRecup() {
+			var data = [];
+			$.ajax({
+				method: 'GET',
+				url: 'http://localhost:444/alltitre',
+				dataType: 'json',
+				success: function (response) {
+					data = response.info;
+					$("#formLoaderFilter__titre").autocomplete({
+						source: response.info,
+						appendTo: "#titre"
+					});
+				},
+				error: function (jqXHR, text, error) {
+					console.log(jqXHR, text, error);
+				}
+			});
+		}
+
+		function allrealRecup() {
+			var data = []
+			$.ajax({
+				method: 'GET',
+				url: 'http://localhost:444/allreal',
+				dataType: 'json',
+				success: function (response) {
+					$("#formLoaderFilter__realisateur").autocomplete({
+						source: response.info,
+						appendTo: "#real"
+					});
+				},
+				error: function (jqXHR, text, error) {
+					console.log(jqXHR, text, error);
+				}
+			});
+		}
+
+		function allorgaRecup() {
+			var data = [];
+			$.ajax({
+				method: 'GET',
+				url: 'http://localhost:444/allorga',
+				dataType: 'json',
+				success: function (response) {
+					data = response.info;
+					$("#formLoaderFilter__organisme_demandeur").autocomplete({
+						source: response.info,
+						appendTo: "#orga"
+					});
+				},
+				error: function (jqXHR, text, error) {
+					console.log(jqXHR, text, error);
+				}
+			});
+		}
+
+	</script>
+</body>
+
+</html>

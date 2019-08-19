@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+	<head>
+		<title>Map - OpenLayers</title>
+		<link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" type="text/css">
+		<style>.map{height:800px;width:1200px;}</style>
+		<script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+	</head>
+	
+	<body>
+		
+		<div id="map" class="map"></div>
+		<div id="MousePosition" style="font-weight:bold"></div>
+		
+		<script type="text/javascript">
+		
+			//Création de la <MAP>
+			var map = new ol.Map({
+				target: 'map',
+				layers: [
+					new ol.layer.Tile({
+						source: new ol.source.OSM()
+					}),
+				],
+				view: new ol.View({
+					center: ol.proj.fromLonLat([2.3434,48.8566]),
+					zoom: 12.5
+				})
+			});
+			
+			//Création d'un <LAYER>
+			var layer = new ol.layer.Tile({
+				source: new ol.source.OSM()
+			});
+			
+			//Fonction <transform_geometry>
+			function transform_geometry(element) {
+				var current_projection = new ol.proj.Projection({code:"EPSG:4326"});
+				var new_projection = layer.getSource().getProjection();
+				element.getGeometry().transform(current_projection,new_projection);
+			}
+			
+			//Style des <POINTS>
+			var imageStyle = new ol.style.Style({
+				image: new ol.style.Circle({
+					radius: 5,
+					fill: new ol.style.Fill({
+						color: [200,0,0,0.2]
+					}),
+					stroke: new ol.style.Stroke({
+						color: [200,0,0,1],
+						width: 1
+					})
+				})
+			});
+			
+			//Création d'un <POINT>
+			var p1 = new ol.geom.Point([2.3433,48.8566],'XY')
+			var pf1 = new ol.Feature(p1);
+			pf1.setStyle(imageStyle);
+			var features = [pf1];
+			features.forEach(transform_geometry);
+			
+			//Création du <LAYER> pour les <POINTS>
+			var layerp = new ol.layer.Vector({
+				source: new ol.source.Vector({
+					features: features
+				})
+			});
+			map.addLayer(layerp);
+			
+			//Action <OnClick>
+			map.on('click', function(evt) {
+				var coordinate = ol.proj.toLonLat(evt.coordinate);
+				console.log('click on map - '+coordinate);
+			});
+			
+			//Chargement des données GeoJson
+			var AllDataPoint = new ol.layer.Vector({
+				title: 'TEST',
+				source: new ol.source.Vector({
+					projection : 'EPSG:4326',
+					format: new ol.format.GeoJSON(),
+					url: 'database.geojson',
+				}),
+				style: new ol.style.Style({
+					image: new ol.style.Circle({
+						radius: 3,
+						fill: new ol.style.Fill({color:'blue'})
+					})
+				})
+			});
+			map.addLayer(AllDataPoint);
+			
+		</script>
+		
+	</body>
+
+</html>

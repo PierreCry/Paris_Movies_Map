@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
+	
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+	<style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+	  
+	  
+    </style>
+	<script>
+	window.onload = function () {
+	
+	//Chart 1
+	var chart = new CanvasJS.Chart("chartContainer", {
+		animationEnabled: true,
+		theme: "light2",
+		title:{
+			text: "Simple Line Chart"
+		},
+		axisY:{
+			includeZero: false
+		},
+		data: [{        
+			type: "line",       
+			dataPoints: [
+				{ y: 450 },
+				{ y: 414},
+				{ y: 520, indexLabel: "highest",markerColor: "red", markerType: "triangle" },
+				{ y: 460 },
+				{ y: 450 },
+				{ y: 500 },
+				{ y: 480 },
+				{ y: 480 },
+				{ y: 410 , indexLabel: "lowest",markerColor: "DarkSlateGrey", markerType: "cross" },
+				{ y: 500 },
+				{ y: 480 },
+				{ y: 510 }
+			]
+		}]
+	});
+	
+	//Chart2
+	var chart2 = new CanvasJS.Chart("chartContainer2", {
+		animationEnabled: false,
+		title: {
+			text: "Number of iPhones Sold in Different Quarters"
+		},
+		axisX: {
+			minimum: new Date(2015, 01, 25),
+			maximum: new Date(2017, 02, 15),
+			valueFormatString: "MMM YY"
+		},
+		axisY: {
+			title: "Number of Sales",
+			titleFontColor: "#4F81BC",
+			suffix: "mn"
+		},
+		data: [{
+			indexLabelFontColor: "darkSlateGray",
+			name: "views",
+			type: "area",
+			yValueFormatString: "#,##0.0mn",
+			dataPoints: [
+				{ x: new Date(2015, 02, 1), y: 74.4, label: "Q1-2015" },
+				{ x: new Date(2015, 05, 1), y: 61.1, label: "Q2-2015" },
+				{ x: new Date(2015, 08, 1), y: 47.0, label: "Q3-2015" },
+				{ x: new Date(2015, 11, 1), y: 48.0, label: "Q4-2015" },
+				{ x: new Date(2016, 02, 1), y: 74.8, label: "Q1-2016" },
+				{ x: new Date(2016, 05, 1), y: 51.1, label: "Q2-2016" },
+				{ x: new Date(2016, 08, 1), y: 40.4, label: "Q3-2016" },
+				{ x: new Date(2016, 11, 1), y: 45.5, label: "Q4-2016" },
+				{ x: new Date(2017, 02, 1), y: 78.3, label: "Q1-2017", indexLabel: "Highest", markerColor: "red" }
+			]
+		}]
+	});
+	
+	//Chart3
+	var dps = [];
+	var chart3 = new CanvasJS.Chart("chartContainer3", {
+		exportEnabled: true,
+		title :{
+			text: "Dynamic Spline Chart"
+		},
+		axisY: {
+			includeZero: false
+		},
+		data: [{
+			type: "spline",
+			markerSize: 0,
+			dataPoints: dps 
+		}]
+	});
+
+	var xVal = 0;
+	var yVal = 100;
+	var updateInterval = 1000;
+	var dataLength = 50; // number of dataPoints visible at any point
+
+	var updateChart = function (count) {
+		count = count || 1;
+		// count is number of times loop runs to generate random dataPoints.
+		for (var j = 0; j < count; j++) {	
+			yVal = yVal + Math.round(5 + Math.random() *(-5-5));
+			dps.push({
+				x: xVal,
+				y: yVal
+			});
+			xVal++;
+		}
+		if (dps.length > dataLength) {
+			dps.shift();
+		}
+		chart3.render();
+	};
+
+	updateChart(dataLength); 
+	setInterval(function(){ updateChart() }, updateInterval); 
+
+	chart.render();
+	chart2.render();
+
+	}
+	</script>
+	<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    
+	
+  <style data-styled-components=""></style>
+</head>
+<body>	
+	<div class="card text-center">
+	  <div class="card-header">
+		<ul class="nav nav-tabs card-header-tabs">
+		  <li class="nav-item">
+			<a class="nav-link " href="index.html">La carte</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link active" href="index2.html">Les stats</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+		  </li>
+		</ul>
+	  </div>
+	</div>
+	
+	
+
+
+		
+		<div class="row">
+		<div class="col">
+			<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+		</div>
+		<div class="col">
+				<div id="chartContainer2" style="height: 370px; width: 100%;"></div>
+		</div>
+		<div class="col">
+				<div id="chartContainer3" style="height: 370px; width:100%;"></div>
+		</div>
+		<div class="w-100"></div>
+		<div class="col">Column</div>
+		<div class="col">Column</div>
+		<div class="col">Column</div>
+		
+	  </div>
+
+	
+	
+	
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+[
+    {
+        "type": "Feature",
+        "geometry": {
+            "type": "Point",
+            "coordinates": [
+                2.320229,
+                48.878256
+            ]
+        },
+        "properties": {
+            "type_de_tournage": "TELEFILM",
+            "organisme_demandeur": "BIG BAND STORY",
+            "adresse": "RUE ROCHER/DE MADRID ET PORTALIS",
+            "date_fin": "2016-03-31",
+            "realisateur": "ARNAULD MERCADIER",
+            "xy": [
+                48.878256,
+                2.320229
+            ],
+            "ardt": 75008,
+            "titre": "COUP DE FOUDRE A JAIPUR",
+            "date_debut": "2016-03-31",
+            "id": 0
+        }
+    },
+    {
+        "type": "Feature",
+        "geometry": {
+            "type": "Point",
+            "coordinates": [
+                2.320483,
+                48.876236
+            ]
+        },
+        "properties": {
+            "type_de_tournage": "TELEFILM",
+            "organisme_demandeur": "BIG BAND STORY",
+            "adresse": "PLACE HENRI BERGSON",
+            "date_fin": "2016-03-31",
+            "realisateur": "ARNAULD MERCADIER",
+            "xy": [
+                48.876236,
+                2.320483
+            ],
+            "ardt": 75008,
+            "titre": "COUP DE FOUDRE A JAIPUR",
+            "date_debut": "2016-03-31",
+            "id": 1
+        }
+    },
+    {
+        "type": "Feature",
+        "geometry": {
+            "type": "Point",
+            "coordinates": [
+                2.319789,
+                48.875273
+            ]
+        },
+        "properties": {
+            "type_de_tournage": "TELEFILM",
+            "organisme_demandeur": "BIG BAND STORY",
+            "adresse": "PLACE SAINT AUGUSTIN",
+            "date_fin": "2016-03-31",
+            "realisateur": "ARNAULD MERCADIER",
+            "xy": [
+                48.875273,
+                2.319789
+            ],
+            "ardt": 75008,
+            "titre": "COUP DE FOUDRE A JAIPUR",
+            "date_debut": "2016-03-31",
+            "id": 2
+        }
+    },
+    {
+        "type": "Feature",
+        "geometry": {
+            "type": "Point",
+            "coordinates": [
+                2.319672,
+                48.875605
+            ]
+        },
+        "properties": {
+            "type_de_tournage": "TELEFILM",
+            "organisme_demandeur": "BIG BAND STORY",
+            "adresse": "12 PLACE SAINT AUGUSTIN",
+            "date_fin": "2016-03-31",
+            "realisateur": "ARNAULD MERCADIER",
+            "xy": [
+                48.875605,
+                2.319672
+            ],
+            "ardt": 75008,
+            "titre": "COUP DE FOUDRE A JAIPUR",
+            "date_debut": "2016-03-31",
+            "id": 3
+        }
+    }
+]
